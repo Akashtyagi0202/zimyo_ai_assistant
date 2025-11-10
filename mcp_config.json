@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "zimyo-hrms": {
+      "command": "node",
+      "args": [
+        "../zimyo_api_server/src/mcp/server.js"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

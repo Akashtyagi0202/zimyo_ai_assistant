@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zimyo AI Assistant - Test Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            height: calc(100vh - 180px);
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .login-section {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .sessions-section {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Custom scrollbar for sessions */
+        .sessions-section::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sessions-section::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .sessions-section::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .sessions-section::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        .sessions-section h3 {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        #sessionsList {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Custom scrollbar for sessions list */
+        #sessionsList::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #sessionsList::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        #sessionsList::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        #sessionsList::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        .session-item {
+            padding: 12px;
+            background: #f8f8f8;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .session-item:hover {
+            background: #f0f0f0;
+        }
+
+        .session-item.active {
+            background: #667eea;
+            color: white;
+            border-color: #764ba2;
+        }
+
+        .session-item .session-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .session-item .session-id {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .chat-area {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h2 {
+            font-size: 1.3rem;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            font-size: 0.85rem;
+        }
+
+        .status-badge.connected {
+            background: rgba(76, 175, 80, 0.3);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 15px;
+            position: relative;
+            white-space: pre-wrap; /* Preserve line breaks and spaces */
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.assistant .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .send-btn {
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Resources / Policy Documents Styles */
+        .resources-container {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-left: 3px solid #667eea;
+            border-radius: 8px;
+        }
+
+        .resources-header {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s;
+        }
+
+        .resource-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+
+        .resource-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .resource-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .resource-icon {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .resource-details {
+            flex: 1;
+        }
+
+        .resource-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .resource-description {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .resource-action {
+            display: flex;
+            gap: 8px;
+        }
+
+        .resource-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .resource-btn.download {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .resource-btn.download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .resource-btn.view {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .resource-btn.view:hover {
+            background: #e0e0e0;
+        }
+
+        /* Salary Slip Download Button */
+        .salary-slip-download {
+            margin-top: 15px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .salary-slip-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .sidebar {
+                margin-bottom: 20px;
+            }
+
+            .chat-area {
+                height: 60vh;
+            }
+
+            .resource-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .resource-action {
+                width: 100%;
+            }
+
+            .resource-btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Zimyo AI Assistant</h1>
+            <p>Test Interface - Chat & Session Management</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h2>User Login</h2>
+
+                <div id="alertContainer"></div>
+
+                <div class="login-section">
+                    <div class="form-group">
+                        <label>User ID</label>
+                        <input type="text" id="userId" placeholder="Enter real Zimyo employee ID" value="">
+                        <small style="color: #999; font-size: 0.8rem; display: block; margin-top: 5px;">
+                            ⚠️ Use actual employee ID from Zimyo system
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select id="role">
+                            <option value="employee">Employee</option>
+                            <option value="manager">Manager</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>User Token</label>
+                        <input type="text" id="userToken" placeholder="test123" value="test123">
+                    </div>
+                    <button class="btn btn-primary" id="loginBtn">Login</button>
+                </div>
+
+                <div class="sessions-section">
+                    <h3>Sessions</h3>
+                    <button class="btn btn-secondary" id="createSessionBtn" disabled>+ New Session</button>
+                    <div id="sessionsList" style="margin-top: 15px;">
+                        <!-- Sessions will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-area">
+                <div class="chat-header">
+                    <h2>Chat</h2>
+                    <div class="status-badge" id="statusBadge">Not Connected</div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="empty-state">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                        <h3>Welcome to Zimyo AI Assistant</h3>
+                        <p>Login and start chatting to test the API</p>
+                    </div>
+                </div>
+
+                <div class="loading" id="loadingIndicator">
+                    <div class="loading-spinner"></div>
+                    <span style="margin-left: 10px;">AI is thinking...</span>
+                </div>
+
+                <div class="chat-input-area">
+                    <div class="chat-input-container">
+                        <input
+                            type="text"
+                            class="chat-input"
+                            id="messageInput"
+                            placeholder="Type your message here..."
+                            disabled
+                        >
+                        <button class="send-btn" id="sendBtn" disabled>
+                            <span>➤</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = 'http://localhost:8080';
+
+        // State
+        let currentUser = null;
+        let currentSession = null;
+        let sessions = [];
+        let conversationContext = {}; // Track conversation context
+
+        // DOM Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const createSessionBtn = document.getElementById('createSessionBtn');
+        const sendBtn = document.getElementById('sendBtn');
+        const messageInput = document.getElementById('messageInput');
+        const chatMessages = document.getElementById('chatMessages');
+        const sessionsList = document.getElementById('sessionsList');
+        const statusBadge = document.getElementById('statusBadge');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const alertContainer = document.getElementById('alertContainer');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            loginBtn.addEventListener('click', handleLogin);
+            createSessionBtn.addEventListener('click', handleCreateSession);
+            sendBtn.addEventListener('click', handleSendMessage);
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !sendBtn.disabled) {
+                    handleSendMessage();
+                }
+            });
+        }
+
+        // Alert Functions
+        function showAlert(message, type = 'success') {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} show`;
+            alert.textContent = message;
+            alertContainer.appendChild(alert);
+
+            setTimeout(() => {
+                alert.classList.remove('show');
+                setTimeout(() => alert.remove(), 300);
+            }, 3000);
+        }
+
+        // Login Handler
+        async function handleLogin() {
+            const userId = document.getElementById('userId').value.trim();
+            const role = document.getElementById('role').value;
+            const userToken = document.getElementById('userToken').value.trim();
+
+            if (!userId || !userToken) {
+                showAlert('Please fill in all fields', 'error');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
+
+            try {
+                const response = await fetch(
+                    `${API_BASE_URL}/login?userId=${userId}&role=${role}&userToken=${userToken}`,
+                    { method: 'POST' }
+                );
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentUser = { userId, role, userToken };
+                    showAlert('Login successful!', 'success');
+                    updateStatus('Connected', true);
+                    createSessionBtn.disabled = false;
+                    messageInput.disabled = false;
+                    sendBtn.disabled = false;
+
+                    // Load sessions
+                    await loadSessions();
+                } else {
+                    let errorMsg = data.detail || 'Login failed';
+
+                    // Check if it's an employee not found error
+                    if (errorMsg.includes('500 Server Error') || errorMsg.includes('employee-details')) {
+                        errorMsg = `Employee ID "${userId}" not found in Zimyo system. Please use a valid employee ID.`;
+                    }
+
+                    showAlert(errorMsg, 'error');
+                }
+            } catch (error) {
+                showAlert('Error connecting to server: ' + error.message, 'error');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+            }
+        }
+
+        // Load Sessions
+        async function loadSessions() {
+            if (!currentUser) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/sessions/${currentUser.userId}`);
+                const data = await response.json();
+
+                sessions = data.sessions || [];
+                renderSessions();
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+            }
+        }
+
+        // Create Session
+        async function handleCreateSession() {
+            const sessionName = prompt('Enter session name (optional):');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/sessions/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: currentUser.userId,
+                        sessionName: sessionName || undefined
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('Session created!', 'success');
+                    await loadSessions();
+                    selectSession(data.sessionId);
+                } else {
+                    showAlert('Failed to create session', 'error');
+                }
+            } catch (error) {
+                showAlert('Error creating session: ' + error.message, 'error');
+            }
+        }
+
+        // Render Sessions
+        function renderSessions() {
+            if (sessions.length === 0) {
+                sessionsList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sessions yet</p>';
+                return;
+            }
+
+            sessionsList.innerHTML = sessions.map(session => `
+                <div class="session-item ${currentSession?.session_id === session.session_id ? 'active' : ''}"
+                     onclick="selectSession('${session.session_id}')">
+                    <div class="session-name">${session.session_name || 'Unnamed Session'}</div>
+                    <div class="session-id">${session.session_id}</div>
+                </div>
+            `).join('');
+        }
+
+        // Select Session
+        async function selectSession(sessionId) {
+            currentSession = sessions.find(s => s.session_id === sessionId);
+            conversationContext = {}; // Reset context when switching sessions
+            renderSessions();
+            clearChat();
+            addSystemMessage(`Session "${currentSession.session_name || 'Unnamed'}" selected`);
+
+            // Load chat history for this session
+            await loadChatHistory(sessionId);
+        }
+
+        // Load chat history for a session
+        async function loadChatHistory(sessionId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/sessions/${currentUser.userId}/${sessionId}/history`);
+                const data = await response.json();
+
+                if (response.ok && data.history && data.history.length > 0) {
+                    // Display each message from history
+                    data.history.forEach(msg => {
+                        addMessage(msg.message, msg.role);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading chat history:', error);
+            }
+        }
+
+        // Send Message
+        async function handleSendMessage() {
+            const message = messageInput.value.trim();
+
+            if (!message) return;
+            if (!currentUser) {
+                showAlert('Please login first', 'error');
+                return;
+            }
+
+            // Add user message
+            addMessage(message, 'user');
+            messageInput.value = '';
+            sendBtn.disabled = true;
+            messageInput.disabled = true;
+            loadingIndicator.classList.add('active');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: currentUser.userId,
+                        message: message,
+                        sessionId: currentSession?.session_id,
+                        context: conversationContext // Use stored context
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Add message with resources and salary slip buffer if available
+                    addMessage(data.response, 'assistant', data.resources, data.salary_slip_buffer);
+
+                    // Update conversation context if provided
+                    if (data.context) {
+                        conversationContext = data.context;
+                    }
+                } else {
+                    addMessage('Error: ' + (data.detail || 'Failed to get response'), 'assistant');
+                }
+            } catch (error) {
+                addMessage('Error connecting to server: ' + error.message, 'assistant');
+            } finally {
+                sendBtn.disabled = false;
+                messageInput.disabled = false;
+                loadingIndicator.classList.remove('active');
+                messageInput.focus();
+            }
+        }
+
+        // Add Message to Chat
+        function addMessage(text, sender, resources, salarySlipBuffer) {
+            const emptyState = chatMessages.querySelector('.empty-state');
+            if (emptyState) emptyState.remove();
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+            let messageHTML = `
+                <div class="message-content">
+                    <div>${text}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+
+            // Add salary slip download button if buffer is available
+            if (salarySlipBuffer && salarySlipBuffer.trim() !== '') {
+                messageHTML += `
+                    <div style="padding: 15px 20px;">
+                        <button class="salary-slip-download" onclick="downloadSalarySlipPDF('${salarySlipBuffer}')">
+                            📥 Download Salary Slip PDF
+                        </button>
+                    </div>
+                `;
+            }
+
+            // Add resources if available
+            if (resources && Array.isArray(resources) && resources.length > 0) {
+                messageHTML += `
+                    <div class="resources-container">
+                        <div class="resources-header">📎 संबंधित दस्तावेज़ | Attached Documents</div>
+                        ${resources.map(resource => `
+                            <div class="resource-item">
+                                <div class="resource-info">
+                                    <div class="resource-icon">📄</div>
+                                    <div class="resource-details">
+                                        <div class="resource-name">${resource.name}</div>
+                                        <div class="resource-description">${resource.description || resource.type}</div>
+                                    </div>
+                                </div>
+                                <button class="resource-btn download" onclick="downloadResource('${resource.name}')">
+                                    Download
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            messageDiv.innerHTML = messageHTML;
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Download Salary Slip PDF from base64
+        function downloadSalarySlipPDF(base64Data) {
+            try {
+                if (!base64Data || base64Data.trim() === '') {
+                    alert('❌ PDF data not available');
+                    return;
+                }
+
+                // Convert base64 to blob
+                const byteCharacters = atob(base64Data);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+
+                // Generate filename with timestamp
+                const now = new Date();
+                const timestamp = now.toISOString().slice(0, 10); // YYYY-MM-DD
+                link.download = `Salary_Slip_${timestamp}.pdf`;
+
+                // Trigger download
+                document.body.appendChild(link);
+                link.click();
+
+                // Cleanup
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+
+                console.log('✅ Salary slip PDF downloaded successfully');
+            } catch (error) {
+                console.error('Error downloading PDF:', error);
+                alert('❌ Error downloading PDF. Please try again.');
+            }
+        }
+
+        // Download Resource
+        function downloadResource(resourceName) {
+            // For now, alert the user - in production, this would trigger actual download
+            // You can implement actual download logic here by fetching from your server
+            console.log('Downloading resource:', resourceName);
+            alert(`📄 Resource: ${resourceName}\n\nDownload functionality can be implemented by:\n1. Storing policies in server/storage\n2. Creating download endpoint\n3. Fetching and downloading the file\n\nFor now, this is a placeholder.`);
+
+            // Example production implementation:
+            // window.open(`/api/download/policy/${encodeURIComponent(resourceName)}`, '_blank');
+        }
+
+        // Add System Message
+        function addSystemMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.style.textAlign = 'center';
+            messageDiv.style.padding = '10px';
+            messageDiv.style.color = '#999';
+            messageDiv.style.fontSize = '0.9rem';
+            messageDiv.textContent = text;
+            chatMessages.appendChild(messageDiv);
+        }
+
+        // Clear Chat
+        function clearChat() {
+            chatMessages.innerHTML = '';
+        }
+
+        // Update Status
+        function updateStatus(text, connected) {
+            statusBadge.textContent = text;
+            statusBadge.className = `status-badge ${connected ? 'connected' : ''}`;
+        }
+    </script>
+</body>
+</html>
