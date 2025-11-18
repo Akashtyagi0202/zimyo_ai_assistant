@@ -12,6 +12,10 @@ pdfplumber
 langchain
 langchain-community
 langchain-openai
+langchain-google-genai
+langgraph
+langgraph-checkpoint
+langsmith
 openai
 httpx
 python-multipart
@@ -20,3 +24,4 @@ python-levenshtein
 langdetect
 google-generativeai
 aiohttp
+python-dateutil

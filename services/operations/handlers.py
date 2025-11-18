@@ -156,12 +156,12 @@ async def handle_user_operation(redis_client, user_id: str, user_prompt: str, us
     try:
         logger.info(f"Handling operation for user {user_id} with role {user_role}")
 
-        # Step 1: Try AI-powered HRMS handler (handles leave, attendance, balance queries intelligently)
-        from services.operations.ai_handler import handle_hrms_with_ai
+        # Step 1: Try LangGraph-powered HRMS workflow (state-machine based workflows)
+        from services.ai.hrms_workflow_orchestrator import process_hrms_message
 
-        ai_result = await handle_hrms_with_ai(user_id, user_prompt, session_id)
+        ai_result = await process_hrms_message(user_id, user_prompt, session_id)
         if ai_result is not None:
-            logger.info("✅ AI handler processed the request")
+            logger.info("✅ LangGraph workflow processed the request")
             return ai_result
 
         logger.info("AI handler returned None, falling back to other handlers")
